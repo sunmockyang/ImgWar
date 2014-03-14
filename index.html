@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>Flame War - Sunmock Yang</title>
+	<style>
+		body{
+			text-align: center;
+			background-color: #333;
+			font-family: Arial;
+			font-size: 12px;
+			text-decoration: none;
+			color: #FFF;
+		}
+		
+		canvas{
+			z-index: 1;
+			margin-top:2%;
+		}
+		
+		a{
+			color: #999;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		a:hover{
+			color:#9FF;
+		}
+
+		#credit{
+			right: 10px;
+			position: absolute;
+			bottom: 10px;
+		}
+		
+		#project{
+			left: 10px;
+			position: absolute;
+			bottom: 10px;
+		}
+
+		#description{
+
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- <canvas id="canvas" style="border: solid grey 2px" width="800px" height="450px"> -->
+	<canvas id="canvas" style="border: solid grey 2px" width="1200px" height="700px">
+		YOUR BROWSER IS TOO POOR
+	</canvas>
+	<div id="description">
+	Particles will avoid your mouse. Press your mouse button to attract particles. 
+	<br/>
+	<input id="imgUrl" type="text" value="Image URL" onclick="if(this.value === 'Image URL'){this.value = '';}"></input>
+	<button onclick="addImage(document.getElementById('imgUrl').value); document.getElementById('imgUrl').value = '';">Add Image</button>
+	</div>
+
+	<div id="project">Flame War</div>
+	<a id="credit" href="http://sunmock.com">Sunmock Yang, Nov. 2013</a>
+
+	<script>
+		var globs = {
+			canvas: null,
+			context: null,
+
+			cWidth: -1,
+			cHeight: -1,
+
+			quads: null,
+			allImages: [],
+			allParticles: [],
+
+			canvasCenter: null,
+
+			mouse: null,
+			debug: true
+		}
+
+		var framerate = 60;
+
+		function addImage(src){
+			if(src != "")
+				globs.allImages.push(new WholeImage(src));
+		}
+
+		function init(){
+			globs.canvas = document.getElementById('canvas');
+			globs.context = globs.canvas.getContext("2d");
+
+			globs.canvasCenter = new Vector(globs.canvas.width/2, globs.canvas.height/2);
+
+			globs.cWidth = globs.canvas.width;
+			globs.cHeight = globs.canvas.height;
+
+			globs.mouse = new LibraryMouse(globs.canvas);
+
+			globs.mouse.addEventListener("mousemove", function(){});
+			globs.mouse.addEventListener("mousedown", function(){});
+			globs.mouse.addEventListener("mouseup", function(){});
+			globs.mouse.addEventListener("mouseout", function(){});
+			globs.mouse.addEventListener("mouseover", function(){});
+
+			globs.quads = new Quadrants(globs.cWidth, globs.cHeight, 100),
+
+			WholeImage.prototype.quads = globs.quads;
+
+			ImageParticle.prototype.canvas = globs.canvas;
+			ImageParticle.prototype.context = globs.context;
+			ImageParticle.prototype.quadManager = globs.quads;
+		}
+
+		function localStorage(){
+		}
+
+
+		function main(){
+			init();
+			localStorage();
+
+			globs.allImages.push(new WholeImage("http://wallpapers.wallbase.cc/rozne/wallpaper-27083.jpg"));
+			globs.allImages.push(new WholeImage("http://wallpapers.wallbase.cc/rozne/wallpaper-68842.jpg"));
+
+			run();
+		}
+
+		function update(){
+			for (var i = 0; i < globs.allImages.length; i++) {
+				globs.allImages[i].update();
+			};
+
+			for (var i = 0; i < globs.allParticles.length; i++) {
+				globs.quads.processObj(globs.allParticles[i]);
+			};
+		}
+
+		function draw(){
+			globs.context.fillStyle = "rgba(33,33,33,1)";
+			globs.context.fillRect(0,0, globs.cWidth, globs.cHeight);
+
+			globs.quads.draw();
+			for (var i = 0; i < globs.allImages.length; i++) {
+				globs.allImages[i].draw();
+			};
+		};
+
+		document.onkeydown = function(e){
+			switch(e.keyCode){
+				case KEYMAP.SPACE:
+					console.log("SPAAAAACCEEEEE");
+				break;
+			}
+		}
+
+		window.onload = main;
+	</script>
+
+	<script type="text/javascript" src="scripts/keycodes.js"></script>
+	<script type="text/javascript" src="scripts/Quads.js"></script>
+	<script type="text/javascript" src="scripts/Math.js"></script>
+	<script type="text/javascript" src="scripts/Image.js"></script>
+	<script type="text/javascript" src="scripts/AppRunner.js"></script>
+	<script type="text/javascript" src="scripts/LibraryMouse.min.js"></script>
+</body>
+
+</html>
